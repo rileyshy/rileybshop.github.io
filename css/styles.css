@@ -5,23 +5,36 @@ body {
     padding: 0;
     background-color: #1e1e2e; /* Dark background */
     color: #cfcfcf; /* Light text color */
+    line-height: 1.6;
 }
 
 header {
     background-color: #5865F2;
     color: #fff;
-    padding: 10px 0;
+    padding: 15px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8em;
 }
 
 nav ul {
     list-style: none;
     padding: 0;
+    margin: 10px 0 0;
     display: flex;
     justify-content: center;
 }
 
 nav ul li {
-    margin: 0 15px;
+    margin: 0 20px;
 }
 
 nav ul li a {
@@ -29,6 +42,7 @@ nav ul li a {
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s;
+    font-size: 1.1em;
 }
 
 nav ul li a:hover {
@@ -37,16 +51,19 @@ nav ul li a:hover {
 
 main {
     padding: 20px;
+    max-width: 1000px;
+    margin: 80px auto 20px; /* Adjusted for fixed header */
 }
 
 footer {
     background-color: #333;
     color: #fff;
     text-align: center;
-    padding: 10px 0;
+    padding: 15px 0;
     position: fixed;
     width: 100%;
     bottom: 0;
+    z-index: 1000;
 }
 
 /* Hero Section */
@@ -55,6 +72,7 @@ footer {
     padding: 100px 20px;
     background-color: #7289DA;
     color: #fff;
+    margin-bottom: 40px;
 }
 
 .hero h1 {
@@ -64,6 +82,8 @@ footer {
 
 .hero p {
     font-size: 1.2em;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 /* Products Section */
@@ -177,62 +197,152 @@ form button:hover {
     background-color: #4752c4;
 }
 
-/* Your existing CSS styles */
+/* Checkout Section */
+.checkout {
+    background: #2e2e3e;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    color: #fff;
+    margin-top: 20px;
+}
 
-/* Header */
-header {
+.checkout h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 4px;
+    background: #1e1e2e;
+    color: #cfcfcf;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #5865F2;
+}
+
+.paypal-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Button Styling */
+.btn-primary {
+    width: 100%;
+    padding: 10px;
     background-color: #5865F2;
     color: #fff;
-    padding: 10px 0;
-    position: relative; /* Added for positioning the beta label */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    justify-content: center;
+.btn-primary:hover {
+    background-color: #4752c4;
 }
 
-nav ul li {
-    margin: 0 15px;
-}
-
-nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-nav ul li a:hover {
-    color: #d4d4f7;
-}
-
-/* Main */
-main {
+/* Cart Section */
+#cart-items {
+    background: #2e2e3e;
     padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Footer */
-footer {
-    background-color: #333;
-    color: #fff;
+#cart-items p {
     text-align: center;
-    padding: 10px 0;
-    position: fixed;
-    width: 100%;
-    bottom: 0;
+    font-size: 1.2em;
 }
 
-/* Beta Label */
-.beta-label {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background-color: #ff6f61;
+#cart-items .cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #444;
+}
+
+#cart-items .cart-item:last-child {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+#cart-items .cart-item h3 {
+    margin: 0;
+    font-size: 1.1em;
+}
+
+#cart-items .cart-item p {
+    margin: 5px 0;
+}
+
+#cart-items .cart-item span {
     color: #fff;
+    font-weight: bold;
+}
+
+#cart-items .cart-item button {
+    background-color: #ff4d4d;
+    color: #fff;
+    border: none;
     padding: 5px 10px;
     border-radius: 4px;
-    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#cart-items .cart-item button:hover {
+    background-color: #cc0000;
+}
+
+button.proceed-checkout {
+    margin-top: 20px;
+    width: 100%;
+    padding: 10px;
+    background-color: #5865F2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button.proceed-checkout:hover {
+    background-color: #4752c4;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    main {
+        padding: 10px;
+    }
+
+    .form-group input {
+        padding: 8px;
+    }
+
+    .btn-primary {
+        padding: 10px;
+    }
+
+    nav ul li {
+        margin: 0 10px;
+    }
 }

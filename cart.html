@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Cart - Discord Tools Shop</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2e; /* Dark background */
+            color: #cfcfcf; /* Light text color */
+        }
+
+        header {
+            background-color: #5865F2;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #d4d4f7;
+        }
+
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .cart-items {
+            margin: 0 auto;
+            max-width: 600px;
+            background: #2e2e3e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #3e3e4e;
+            border-radius: 4px;
+        }
+
+        .cart-item h3, .cart-item p {
+            margin: 0;
+        }
+
+        .cart-item input {
+            width: 50px;
+            text-align: center;
+            margin-right: 10px;
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .cart-item button {
+            background-color: #5865F2;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .cart-item button:hover {
+            background-color: #4755d9;
+        }
+
+        .total {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .proceed-button {
+            display: block;
+            margin: 20px auto 0;
+            background-color: #5865F2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .proceed-button:hover {
+            background-color: #4755d9;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Discord Tools Shop</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="checkout.html">Checkout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h2>Your Cart</h2>
+        <div class="cart-items" id="cart-items"></div>
+        <div class="total" id="cart-total"></div>
+        <button class="proceed-button" onclick="proceedToCheckout()">Proceed to Checkout</button>
+    </main>
+    <footer>
+        <p>&copy; 2024 Discord Tools Shop. All rights reserved.</p>
+    </footer>
+    <script>
+        // Load cart items from localStorage
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartItemsDiv = document.getElementById('cart-items');
+        const cartTotalDiv = document.getElementById('cart-total');
+        let totalAmount = 0;
+
+        function updateCart() {
+            cartItemsDiv.innerHTML = '';
+            totalAmount = 0;
+
+            if (cartItems.length === 0) {
+                cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
+            } else {
+                cartItems.forEach((item, index) => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.classList.add('cart-item');
+                    itemDiv.innerHTML = `
+                        <h3>${item.name}</h3>
+                        <p>£${item.price.toFixed(2)}</p>
+                        <input type="number" min="1" value="${item.quantity}" onchange="updateQuantity(${index}, this.value)">
+                        <span>£${(item.price * item.quantity).toFixed(2)}</span>
+                        <button onclick="removeItem(${index})">Remove</button>
+                    `;
+                    cartItemsDiv.appendChild(itemDiv);
+                    totalAmount += item.price * item.quantity;
+                });
+
+                cartTotalDiv.innerHTML = `Total: £${totalAmount.toFixed(2)}`;
+            }
+        }
+
+        function updateQuantity(index, quantity) {
+            if (quantity < 1) {
+                quantity = 1;
+            }
+            cartItems[index].quantity = parseInt(quantity, 10);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            updateCart();
+        }
+
+        function removeItem(index) {
+            cartItems.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+            updateCart();
+        }
+
+        function proceedToCheckout() {
+            window.location.href = 'checkout.html';
+        }
+
+        // Initial load
+        updateCart();
+    </script>
+</body>
+</html>

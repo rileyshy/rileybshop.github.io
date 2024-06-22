@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Discord Tools Shop</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://www.paypal.com/sdk/js?client-id=AaU6bOIQZTSdes2BL7g6tJNaFjNPGOn6_eqne1jW8q1_CXQR3eBtB-QGPvP-6gjkpUcI113eCOqSoXa7&currency=GBP"></script>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1e1e2e; /* Dark background */
+            color: #cfcfcf; /* Light text color */
+        }
+
+        header {
+            background-color: #5865F2;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+        }
+
+        nav ul li {
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: #d4d4f7;
+        }
+
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .checkout {
+            margin: 0 auto;
+            padding: 20px;
+            background: #2e2e3e;
+            border-radius: 8px;
+            max-width: 600px;
+            text-align: left;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .checkout h2 {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .checkout form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .checkout label {
+            margin-bottom: 5px;
+        }
+
+        .checkout input {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        .checkout .cart-summary {
+            margin-top: 20px;
+            background: #1e1e2e;
+            padding: 10px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .checkout .cart-summary div {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .checkout .cart-summary div span {
+            display: block;
+            font-size: 1.2em;
+        }
+
+        .checkout .total {
+            font-size: 1.5em;
+            font-weight: bold;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Discord Tools Shop</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="cart.html">Cart</a></li>
+                <li><a href="checkout.html">Checkout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section class="checkout">
+            <h2>Checkout</h2>
+            <form id="checkout-form">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+                
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+
+                <div class="cart-summary" id="cart-summary"></div>
+                <div class="total" id="total-amount"></div>
+                
+                <div id="paypal-button-container" style="margin-top: 20px;"></div>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Discord Tools Shop. All rights reserved.</p>
+    </footer>
+    <script>
+        // Load cart items from localStorage
+        const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+        const cartSummary = document.getElementById('cart-summary');
+        const totalAmountElement = document.getElementById('total-amount');
+        let totalAmount = 0;
+
+        if (cartItems.length === 0) {
+            cartSummary.innerHTML = '<p>Your cart is empty.</p>';
+        } else {
+            cartItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `
+                    <span>${item.name} (x${item.quantity})</span>
+                    <span>£${(item.price * item.quantity).toFixed(2)}</span>
+                `;
+                cartSummary.appendChild(itemDiv);
+                totalAmount += item.price * item.quantity;
+            });
+
+            totalAmountElement.innerHTML = `Total: £${totalAmount.toFixed(2)}`;
+        }
+
+        // Render the PayPal button with the correct amount
+        paypal.Buttons({
+            createOrder: (data, actions) => {
+                return actions.order.create({
+                    purchase_units: [{
+                        amount: {
+                            value: totalAmount.toString(),
+                            currency_code: 'GBP' // Set currency to GBP
+                        }
+                    }]
+                });
+            },
+            onApprove: (data, actions) => {
+                return actions.order.capture().then(function(details) {
+                    // Capture buyer's email and order ID
+                    const email = document.getElementById('email').value;
+                    const orderID = data.orderID;
+
+                    // Send payment success details to backend to send email
+                    fetch('http://localhost:5000/api/payment-success', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderID,
+                            email,
+                            cartItems,
+                            totalAmount
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Payment completed successfully! Check your email for the download links.');
+                        localStorage.removeItem('cart'); // Clear the cart after successful payment
+                        window.location.href = 'index.html'; // Redirect to home or thank you page
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                    });
+                });
+            }
+        }).render('#paypal-button-container');
+    </script>
+</body>
+</html>
